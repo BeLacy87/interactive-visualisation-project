@@ -1,6 +1,6 @@
 This project was the development of an interactive dashboard.   
 
-Github page found at: https://belacy87.github.io/interactive-visualization-project/
+Github page available
 
 Skills utilized:
 -html
