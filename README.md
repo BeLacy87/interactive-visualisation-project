@@ -1,6 +1,4 @@
-In this assignment, you will build an interactive dashboard to explore the Belly Button Biodiversity dataset, which catalogs the microbes that colonize human navels.
-
-This project was the development of an interactive dashboard.  
+This project was the development of an interactive dashboard.   Github page found at: 
 -html
 -css
 -js
