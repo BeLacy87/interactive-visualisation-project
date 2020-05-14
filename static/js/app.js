@@ -6,23 +6,43 @@
   var otu_idValues= [];
   var sample_values=[];
   var metadata=[];
-  var otu_ids =[];
+  
   var otu_labels = [];
   
 
 //start json calls
-  const url = "data/limited_data.json";
+  const url = "data/samples.json";
+
+
+function optionChanged (d) {
+  console.log("option changed function");
+  const isNumber = (element) => element === d;
+  d3.selectAll("td").remove();
+  var idx = (names.findIndex(isNumber));
+  init(idx);
+  //call function to plot
+}   
   
+ 
 //fill the above arrays
-function getData (){
+function init (i){
   d3.json(url).then((object) => {
     console.log(object);
-    var names = object.names;
-    var otu_idValues = object.samples[0].otu_ids;
-    var sample_values = object.samples[0].sample_values;
-    var otu_labels= object.samples[0].otu_labels;
-    var metadata = object.metadata[0];
+    names = object.names;
+    var otu_idValues = object.samples[i].otu_ids;
+    var sample_values = object.samples[i].sample_values;
+    var otu_labels= object.samples[i].otu_labels;
+    var metadata = object.metadata[i];
+
+    
+  
+    var dropMenu = d3.select("#selDataset")
+    for (i in names){
+      var newOption=dropMenu.append("option")
+      newOption.text(names[i]);
+    }
 //basic sorts/manipulations
+    var otu_ids =[];
     otu_idValues.forEach(val => {
       otu_ids.push(`OTU ${val}`);
       });
@@ -42,18 +62,18 @@ function getData (){
     })
     
     //sliced sample values for bar graph, reverse so graph is desc
-    var slicedSampleValues = sortedSampleValues.slice(0,3).reverse();
-    var slicedOtu_ids = otu_ids.slice(0,3).reverse();
+    var slicedSampleValues = sortedSampleValues.slice(0,10).reverse();
+    var slicedOtu_ids = otu_ids.slice(0,10).reverse();
 
-    console.log(names);    
-    console.log(`otu_ids: ${otu_ids}`);   
-    console.log(`otu_idValues: ${otu_idValues}`);  
-    console.log(`sorted_otuIdValues: ${sortedIdValues}`);  
-    console.log(`sample_values: ${sample_values}`);  
-    console.log(`sortedSampleValues: ${sortedSampleValues}`);  
-    console.log(`slicedSampleValues: ${slicedSampleValues}`); 
-    console.log(metadata);  
-    console.log (`otu_labels: ${otu_labels}`);
+    // console.log(names);    
+    // console.log(`otu_ids: ${otu_ids}`);   
+    // console.log(`otu_idValues: ${otu_idValues}`);  
+    // console.log(`sorted_otuIdValues: ${sortedIdValues}`);  
+    // console.log(`sample_values: ${sample_values}`);  
+    // console.log(`sortedSampleValues: ${sortedSampleValues}`);  
+    // console.log(`slicedSampleValues: ${slicedSampleValues}`); 
+    // console.log(metadata);  
+    // console.log (`otu_labels: ${otu_labels}`);
     
 //bar chart
     var trace1={
@@ -101,7 +121,9 @@ Object.keys(metadata).forEach(function(key) {
     };
   Plotly.newPlot('gauge', data, layout);
 
-
+var bubbleSizes= sample_values.map( i => {return i*50})
+console.log(sample_values);
+console.log(bubbleSizes);
 //bubble plot
 var trace2 = {
   x: otu_idValues,
@@ -109,7 +131,7 @@ var trace2 = {
   text: otu_labels,
   mode: 'markers',
   marker: {
-    size: sample_values,
+    size: bubbleSizes,
     sizemode: 'area',
     color: otu_idValues
   }
@@ -128,4 +150,5 @@ var layout = {
 Plotly.newPlot('bubble', data, layout);
 
 })};
-  getData(); 
+  init(0); 
+  console.log(names);
