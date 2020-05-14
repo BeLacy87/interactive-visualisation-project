@@ -1,56 +1,97 @@
+//setup initial empty arrays
 
-
-  // // Grab values from the data json object to build the plots
-  var names = data.names;
-  var metadata = data.metadata[0];
-  var samples = data.samples;
-  var otu_ids= data.samples[0].otu_ids.map(id =>{
-    return "OTU " + id
-  });
-  var sample_values=data.samples[0].sample_values;
-  var sortedSampleValues=sample_values.sort((a,b)=> b-a);
-  var slicedSampleValues = sortedSampleValues.slice(0,3);
+  
+  var samples = [];
+  var names = [];
+  var otu_idValues= [];
+  var sample_values=[];
+  var metadata=[];
+  var otu_ids =[];
+  var otu_labels = [];
   
 
-  console.log(names);
-  console.log(metadata);
-  console.log(samples);
-  console.log(otu_ids);
-  console.log(sample_values); 
+//start json calls
+  const url = "data/limited_data.json";
+  
+//fill the above arrays
+function getData (){
+  d3.json(url).then((object) => {
+    console.log(object);
+    var names = object.names;
+    var otu_idValues = object.samples[0].otu_ids;
+    var sample_values = object.samples[0].sample_values;
+    var otu_labels= object.samples[0].otu_labels;
+    var metadata = object.metadata[0];
+//basic sorts/manipulations
+    otu_idValues.forEach(val => {
+      otu_ids.push(`OTU ${val}`);
+      });
+    //sorts IdValues for charts
+    var sortedIdValues= otu_idValues.map(i => {
+      return i;
+    });
+    sortedIdValues.sort((a,b)=>{
+      return b-a;
+    })
+    // sorts sampleValues for charts
+    var sortedSampleValues= sample_values.map(i => {
+      return i;
+    });
+    sortedSampleValues.sort((a,b)=>{
+      return b-a;
+    })
+    //sliced sample values for bar graph
+    var slicedSampleValues = sortedSampleValues.slice(0,3);
 
-var trace1=[{
-  x: slicedSampleValues,
-  y: otu_ids,
-  type: "bar",
-  orientation: "h"
-}];
+    console.log(names);    
+    console.log(`otu_ids: ${otu_ids}`);   
+    console.log(`otu_idValues: ${otu_idValues}`);  
+    console.log(`sorted_otuIdValues: ${sortedIdValues}`);  
+    console.log(`sample_values: ${sample_values}`);  
+    console.log(`sortedSampleValues: ${sortedSampleValues}`);  
+    console.log(`slicedSampleValues: ${slicedSampleValues}`); 
+    console.log(metadata);  
+    console.log (`otu_labels: ${otu_labels}`);
+    
 
-var layout = {title: "Sample OTU"}
+    var trace1={
+      x: slicedSampleValues,
+      y: otu_ids,
+      type: "bar",
+      orientation: "h"
+    };
 
-Plotly.newPlot("plot", trace1, layout);
+  var data= [trace1];
 
+  var layout = {title: "Sample OTU"}
 
-//metadata panel
-console.log(metadata);
-var mdList = d3.entries(metadata);
-console.log(mdList);
-
-
-var panel = d3.select("#sample-metadata");
-var table = panel.append("table");
-var tbody = table.append("tbody")
+  Plotly.newPlot("plot", data, layout);
 
 
+})};
+  getData(); 
+  
 
-// var panelBody = panel.append("div")
 
-mdList.forEach((metaRow) => {
-  var row = tbody.append("tr");
-  Object.entries(metaRow).forEach(value => {
-    var cell = row.append("td");
-    cell.text(value);
-  });
-});
+
+
+
+// //metadata panel
+
+
+
+
+
+// var panel = d3.select("#sample-metadata");
+// var table = panel.append("table");
+// var tbody = table.append("tbody");
+
+// metadata.forEach(val=>{
+//   console.log(val); 
+// })
+
+
+
  
 
 
@@ -91,16 +132,19 @@ mdList.forEach((metaRow) => {
   // //bubble plot
 
 
-  // var trace1 = {
-  //   x: [1, 2, 3, 4],
-  //   y: [10, 11, 12, 13],
-  //   text: ['A<br>size: 40', 'B<br>size: 60', 'C<br>size: 80', 'D<br>size: 100'],
-  //   mode: 'markers',
-  //   marker: {
-  //     size: [400, 600, 800, 1000],
-  //     sizemode: 'area'
-  //   }
-  // };
+
+
+  var trace2 = {
+    x: otu_idValues,
+    y: sample_values,
+    text: otu_labels,
+    mode: 'markers',
+    marker: {
+      size: sample_values,
+      sizemode: 'area',
+      color: sample_values
+    }
+  };
   
   // var trace2 = {
   //   x: [1, 2, 3, 4],
@@ -128,7 +172,7 @@ mdList.forEach((metaRow) => {
   //   }
   // };
   
-  // // sizeref using above forumla
+  // sizeref using above forumla
   // var desired_maximum_marker_size = 40;
   // var size = [400, 600, 800, 1000];
   // var trace4 = {
@@ -144,13 +188,13 @@ mdList.forEach((metaRow) => {
   //   }
   // };
   
-  // var data = [trace1, trace2, trace3, trace4];
+  var data = [trace2];
   
-  // var layout = {
-  //   title: 'Bubble Chart Size Scaling',
-  //   showlegend: false,
-  //   height: 600,
-  //   width: 600
-  // };
+  var layout = {
+    title: 'Bubble Chart Size Scaling',
+    showlegend: false,
+    height: 600,
+    width: 600
+  };
   
-  // Plotly.newPlot('bubble', data, layout);
+  Plotly.newPlot('bubble', data, layout);
