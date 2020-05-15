@@ -18,6 +18,7 @@ function optionChanged (d) {
   console.log("option changed function");
   const isNumber = (element) => element === d;
   d3.selectAll("td").remove();
+  
   var idx = (names.findIndex(isNumber));
   init(idx);
   //call function to plot
@@ -35,8 +36,9 @@ function init (i){
     var metadata = object.metadata[i];
 
     
-  
+    
     var dropMenu = d3.select("#selDataset")
+    
     for (i in names){
       var newOption=dropMenu.append("option")
       newOption.text(names[i]);
