@@ -1,30 +1,27 @@
-//setup initial empty arrays
-
-  
+//setup initial empty arrays 
   var samples = [];
   var names = [];
   var otu_idValues= [];
   var sample_values=[];
-  var metadata=[];
-  
-  var otu_labels = [];
-  
+  var metadata=[];  
+  var otu_labels = [];  
 
-//start json calls
-  const url = "data/samples.json";
+const url = "data/samples.json";
 
-
+//update page based on dropdown selection
 function optionChanged (d) {
   console.log("option changed function");
   const isNumber = (element) => element === d;
-  d3.selectAll("td").remove();
-  
   var idx = (names.findIndex(isNumber));
+  d3.selectAll("td").remove();
+  d3.selectAll("option").remove();
+  var dropMenu = d3.select("#selDataset")
+    dropMenu.append("option").text(d);  
   init(idx);
-  //call function to plot
-}   
-  
- 
+}
+
+//call function to plot  
+   
 //fill the above arrays
 function init (i){
   d3.json(url).then((object) => {
@@ -33,40 +30,25 @@ function init (i){
     var otu_idValues = object.samples[i].otu_ids;
     var sample_values = object.samples[i].sample_values;
     var otu_labels= object.samples[i].otu_labels;
-    var metadata = object.metadata[i];
-
-    
+    var metadata = object.metadata[i];    
     
     var dropMenu = d3.select("#selDataset")
-    
+    // d3.selectAll("option").remove();
     for (i in names){
       var newOption=dropMenu.append("option")
       newOption.text(names[i]);
     }
-//basic sorts/manipulations
+//labels for chart
     var otu_ids =[];
     otu_idValues.forEach(val => {
       otu_ids.push(`OTU ${val}`);
       });
-    //sorts IdValues for charts
-    var sortedIdValues= otu_idValues.map(i => {
-      return i;
-    });
-    sortedIdValues.sort((a,b)=>{
-      return b-a;
-    })
-    // sorts sampleValues for charts
-    var sortedSampleValues= sample_values.map(i => {
-      return i;
-    });
-    sortedSampleValues.sort((a,b)=>{
-      return b-a;    
-    })
-    
-    //sliced sample values for bar graph, reverse so graph is desc
-    var slicedSampleValues = sortedSampleValues.slice(0,10).reverse();
+  
+//sliced sample values for bar graph, reverse so graph is desc
+    var slicedSampleValues = sample_values.slice(0,10).reverse();
     var slicedOtu_ids = otu_ids.slice(0,10).reverse();
-
+    
+//check if you need to
     // console.log(names);    
     // console.log(`otu_ids: ${otu_ids}`);   
     // console.log(`otu_idValues: ${otu_idValues}`);  
@@ -78,18 +60,16 @@ function init (i){
     // console.log (`otu_labels: ${otu_labels}`);
     
 //bar chart
-    var trace1={
-      x: slicedSampleValues,
-      y: slicedOtu_ids,
-      type: "bar",
-      orientation: "h"
-    };
-
+  var trace1={
+    x: slicedSampleValues,
+    y: slicedOtu_ids,
+    text: otu_ids,
+    type: "bar",
+    orientation: "h"
+  };
   var data= [trace1];
-
   var layout = {title: "Sample OTU"}
-
-  Plotly.newPlot("plot", data, layout);
+  Plotly.newPlot("plot", data, layout, width = 500);
 
 // //metadata panel
 var panel = d3.select("#sample-metadata");
@@ -124,8 +104,7 @@ Object.keys(metadata).forEach(function(key) {
   Plotly.newPlot('gauge', data, layout);
 
 var bubbleSizes= sample_values.map( i => {return i*50})
-console.log(sample_values);
-console.log(bubbleSizes);
+
 //bubble plot
 var trace2 = {
   x: otu_idValues,
@@ -153,4 +132,4 @@ Plotly.newPlot('bubble', data, layout);
 
 })};
   init(0); 
-  console.log(names);
+console.log(names);
