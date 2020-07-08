@@ -1,6 +1,6 @@
-This project was the development of an interactive dashboard.   
+An interactive dashboard displaying date from the "Belly Button Biodiversity" dataset, from Trilogy.
 
-Github page available
+try it out here: https://belacy87.github.io/interactive-visualization-project/
 
 Skills utilized:
 -html
@@ -9,4 +9,5 @@ Skills utilized:
 -d3
 -plotly
 
-The data set is the "Belly Button Biodiversity" dataset, from Trilogy.
+
+
